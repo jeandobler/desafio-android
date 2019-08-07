@@ -2,13 +2,12 @@ package com.dobler.desafio_android.di
 
 import android.util.Log
 import com.dobler.desafio_android.BuildConfig
-import com.dobler.desafio_android.data.api.githubRepository.GithubRepositoryService
-import com.dobler.desafio_android.data.api.repositoryPullRequest.RepositoryPullRequestService
+import com.dobler.desafio_android.data.api.GithubRepositoryService
 import com.dobler.desafio_android.data.repository.githubRepository.GithubRepositoryDataSource
-import com.dobler.desafio_android.data.repository.githubRepository.Repository
+import com.dobler.desafio_android.data.repository.githubRepository.GithubRepository
 import com.dobler.desafio_android.data.repository.pullRequest.PullRequestRepository
 import com.dobler.desafio_android.ui.pull.PullRequestViewModel
-import com.dobler.desafio_android.ui.repository.ListRepositoryViewModel
+import com.dobler.desafio_android.ui.githubRepository.ListRepositoryViewModel
 import com.dobler.desafio_android.util.rx.SchedulerContract
 import com.dobler.desafio_android.util.rx.SchedulerProvider
 import okhttp3.OkHttpClient
@@ -31,10 +30,6 @@ object AppModule {
         }
 
         single {
-            get<Retrofit>().create(RepositoryPullRequestService::class.java) as RepositoryPullRequestService
-        }
-
-        single {
             get<Retrofit>().create(GithubRepositoryService::class.java) as GithubRepositoryService
         }
 
@@ -43,7 +38,7 @@ object AppModule {
     val repositoriesModule = module {
 
         single { GithubRepositoryDataSource(get()) }
-        single { Repository(get()) }
+        single { GithubRepository(get()) }
         single { PullRequestRepository(get()) }
     }
 

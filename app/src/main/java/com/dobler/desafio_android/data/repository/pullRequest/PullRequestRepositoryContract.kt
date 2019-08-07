@@ -1,6 +1,6 @@
 package com.dobler.desafio_android.data.repository.pullRequest
 
-import com.dobler.desafio_android.data.model.RepositoryPullRequest
+import com.dobler.desafio_android.vo.RepositoryPullRequest
 import io.reactivex.Observable
 
 interface PullRequestRepositoryContract {

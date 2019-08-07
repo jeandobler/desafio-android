@@ -2,7 +2,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="pulls" type="com.dobler.desafio_android.data.model.RepositoryPullRequest"/>
+        <variable name="pulls" type="com.dobler.desafio_android.vo.RepositoryPullRequest"/>
     </data>
 
     <com.google.android.material.card.MaterialCardView

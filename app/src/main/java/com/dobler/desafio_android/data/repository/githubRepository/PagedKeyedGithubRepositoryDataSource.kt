@@ -2,10 +2,12 @@ package com.dobler.desafio_android.data.repository.githubRepository
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
-import com.dobler.desafio_android.data.api.githubRepository.GithubRepositoryResponse
-import com.dobler.desafio_android.data.api.githubRepository.GithubRepositoryService
-import com.dobler.desafio_android.data.model.GithubRepository
+import com.dobler.desafio_android.data.api.GithubRepositoryResponse
+import com.dobler.desafio_android.data.api.GithubRepositoryService
 import com.dobler.desafio_android.util.paging.NetworkState
+import com.dobler.desafio_android.vo.GithubRepository
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Response
 import java.io.IOException
@@ -19,7 +21,7 @@ class PageKeyedSubredditDataSource(
 
     private var retry: (() -> Any)? = null
 
-    var page = 1;
+    var page = 1
 
     val networkState = MutableLiveData<NetworkState>()
 
@@ -44,36 +46,41 @@ class PageKeyedSubredditDataSource(
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<String, GithubRepository>) {
         networkState.postValue(NetworkState.LOADING)
 
-        api.getPage("language:Java", "stars", ++page).enqueue(
-            object : retrofit2.Callback<GithubRepositoryResponse> {
-                override fun onFailure(call: Call<GithubRepositoryResponse>, t: Throwable) {
-                    retry = {
-                        loadAfter(params, callback)
-                    }
-                    networkState.postValue(NetworkState.error(t.message ?: "unknown err"))
-                }
+        runBlocking {
+            launch {
 
-                override fun onResponse(
-                    call: Call<GithubRepositoryResponse>,
-                    response: Response<GithubRepositoryResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val data = response.body()?.items
-                        val items = data?.map { it } ?: emptyList()
-                        retry = null
-                        callback.onResult(items, page.toString())
-                        networkState.postValue(NetworkState.LOADED)
-                    } else {
-                        retry = {
-                            loadAfter(params, callback)
+                api.getPage("language:Java", "stars", ++page).enqueue(
+                    object : retrofit2.Callback<GithubRepositoryResponse> {
+                        override fun onFailure(call: Call<GithubRepositoryResponse>, t: Throwable) {
+                            retry = {
+                                loadAfter(params, callback)
+                            }
+                            networkState.postValue(NetworkState.error(t.message ?: "unknown err"))
                         }
-                        networkState.postValue(
-                            NetworkState.error("error code: ${response.code()}")
-                        )
+
+                        override fun onResponse(
+                            call: Call<GithubRepositoryResponse>,
+                            response: Response<GithubRepositoryResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val data = response.body()?.items
+                                val items = data?.map { it } ?: emptyList()
+                                retry = null
+                                callback.onResult(items, page.toString())
+                                networkState.postValue(NetworkState.LOADED)
+                            } else {
+                                retry = {
+                                    loadAfter(params, callback)
+                                }
+                                networkState.postValue(
+                                    NetworkState.error("error code: ${response.code()}")
+                                )
+                            }
+                        }
                     }
-                }
+                )
             }
-        )
+        }
     }
 
     override fun loadInitial(

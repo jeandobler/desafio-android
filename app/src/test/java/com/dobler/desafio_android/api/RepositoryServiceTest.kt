@@ -1,9 +1,9 @@
 package com.dobler.desafio_android.api
 
-import com.dobler.desafio_android.data.api.githubRepository.GithubRepositoryResponse
-import com.dobler.desafio_android.data.api.githubRepository.GithubRepositoryService
-import com.dobler.desafio_android.data.model.GithubRepository
-import com.dobler.desafio_android.data.model.User
+import com.dobler.desafio_android.data.api.GithubRepositoryResponse
+import com.dobler.desafio_android.data.api.GithubRepositoryService
+import com.dobler.desafio_android.vo.GithubRepository
+import com.dobler.desafio_android.vo.User
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers
 import org.hamcrest.core.IsNull

@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.data.model
+package com.dobler.desafio_android.vo
 
 data class User(
     val avatar_url: String,

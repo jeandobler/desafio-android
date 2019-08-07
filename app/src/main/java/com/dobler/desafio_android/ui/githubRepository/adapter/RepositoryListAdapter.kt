@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.ui.repository.adapter
+package com.dobler.desafio_android.ui.githubRepository.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.dobler.desafio_android.data.model.GithubRepository
+import com.dobler.desafio_android.vo.GithubRepository
 import com.dobler.desafio_android.databinding.ListRvRepositoryBinding
 import com.dobler.desafio_android.util.paging.NetworkState
 import kotlinx.android.synthetic.main.list_rv_user.view.*

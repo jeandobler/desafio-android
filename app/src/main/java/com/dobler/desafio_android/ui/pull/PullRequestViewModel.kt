@@ -2,7 +2,7 @@ package com.dobler.desafio_android.ui.pull
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dobler.desafio_android.data.model.RepositoryPullRequest
+import com.dobler.desafio_android.vo.RepositoryPullRequest
 import com.dobler.desafio_android.data.repository.pullRequest.PullRequestRepository
 import com.dobler.desafio_android.util.rx.SchedulerContract
 import io.reactivex.disposables.CompositeDisposable

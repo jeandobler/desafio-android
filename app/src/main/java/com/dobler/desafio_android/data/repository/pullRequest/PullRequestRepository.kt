@@ -1,11 +1,11 @@
 package com.dobler.desafio_android.data.repository.pullRequest
 
 import androidx.annotation.MainThread
-import com.dobler.desafio_android.data.api.repositoryPullRequest.RepositoryPullRequestService
-import com.dobler.desafio_android.data.model.RepositoryPullRequest
+import com.dobler.desafio_android.data.api.GithubRepositoryService
+import com.dobler.desafio_android.vo.RepositoryPullRequest
 import io.reactivex.Observable
 
-class PullRequestRepository(private val api: RepositoryPullRequestService) :
+class PullRequestRepository(private val api: GithubRepositoryService) :
     PullRequestRepositoryContract {
 
     @MainThread

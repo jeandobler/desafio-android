@@ -1,21 +1,18 @@
-package com.dobler.desafio_android.ui.repository
+package com.dobler.desafio_android.ui.githubRepository
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.dobler.desafio_android.data.model.GithubRepository
-import com.dobler.desafio_android.data.repository.githubRepository.Repository
 import com.dobler.desafio_android.util.paging.Listing
 import com.dobler.desafio_android.util.rx.SchedulerContract
 
 class ListRepositoryViewModel(
-    val repository: Repository,
+    val repository: com.dobler.desafio_android.data.repository.githubRepository.GithubRepository,
     private val schedulers: SchedulerContract
 ) : ViewModel() {
 
     private var started: Boolean = false
-    private var repoResult = MutableLiveData<Listing<GithubRepository>>()
+    private var repoResult = MutableLiveData<Listing<com.dobler.desafio_android.vo.GithubRepository>>()
 
     val githubRepositories = Transformations.switchMap(repoResult, { it.pagedList })!!
     val networkState = Transformations.switchMap(repoResult, { it.networkState })!!

@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.ui.repository
+package com.dobler.desafio_android.ui.githubRepository
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dobler.desafio_android.R
-import com.dobler.desafio_android.data.model.GithubRepository
-import com.dobler.desafio_android.ui.repository.adapter.RepositoryListAdapter
+import com.dobler.desafio_android.vo.GithubRepository
+import com.dobler.desafio_android.ui.githubRepository.adapter.RepositoryListAdapter
 import com.dobler.desafio_android.util.paging.NetworkState
 import kotlinx.android.synthetic.main.fragment_repository_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel

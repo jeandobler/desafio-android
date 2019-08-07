@@ -2,7 +2,7 @@
 <layout
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="user" type="com.dobler.desafio_android.data.model.User"/>
+        <variable name="user" type="com.dobler.desafio_android.vo.User"/>
     </data>
 
     <LinearLayout
