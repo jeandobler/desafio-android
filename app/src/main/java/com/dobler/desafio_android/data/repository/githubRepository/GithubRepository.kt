@@ -1,42 +1,37 @@
 package com.dobler.desafio_android.data.repository.githubRepository
 
-import androidx.annotation.MainThread
-import androidx.lifecycle.Transformations
-import androidx.paging.toLiveData
-import com.dobler.desafio_android.vo.GithubRepository
-import com.dobler.desafio_android.util.paging.Listing
-import io.reactivex.Observable
-import java.util.concurrent.Executors
+import com.dobler.desafio_android.data.api.GithubRepositoryResponse
+import com.dobler.desafio_android.data.api.GithubService
 
-class GithubRepository(private val sourceFactory: GithubRepositoryDataSource) :
-    GithubRepositoryContract {
+class GithubRepository(private val api: GithubService) {
 
-    private val networkExecutor = Executors.newFixedThreadPool(5)
 
-    @MainThread
-    override fun getPage(): Observable<Listing<GithubRepository>> {
-        val livePagedList = sourceFactory.toLiveData(
-            pageSize = 30,
-            fetchExecutor = networkExecutor
-        )
+    suspend fun getPage(): GithubRepositoryResponse = api.getRepositoriesPage("language:Java", "stars", 1)
 
-        val refreshState = Transformations.switchMap(sourceFactory.sourceLiveData) {
-            it.initialLoad
-        }
-        return Observable.just(
-            Listing(
-                pagedList = livePagedList,
-                networkState = Transformations.switchMap(sourceFactory.sourceLiveData) {
-                    it.networkState
-                },
-                retry = {
-                    sourceFactory.sourceLiveData.value?.retryAllFailed()
-                },
-                refresh = {
-                    sourceFactory.sourceLiveData.value?.invalidate()
-                },
-                refreshState = refreshState
-            )
-        )
-    }
+
+
+//                    return api.getPullsList()
+
+//        val livePagedList = sourceFactory.toLiveData(
+//            pageSize = 30,
+//            fetchExecutor = networkExecutor
+//        )
+//
+//        val refreshState = Transformations.switchMap(sourceFactory.sourceLiveData) {
+//            it.initialLoad
+//        }
+//        return Listing(
+//                pagedList = livePagedList,
+//                networkState = Transformations.switchMap(sourceFactory.sourceLiveData) {
+//                    it.networkState
+//                },
+//                retry = {
+//                    sourceFactory.sourceLiveData.value?.retryAllFailed()
+//                },
+//                refresh = {
+//                    sourceFactory.sourceLiveData.value?.invalidate()
+//                },
+//                refreshState = refreshState
+//        )
+//    }
 }

@@ -3,43 +3,44 @@ package com.dobler.desafio_android.ui.githubRepository
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.dobler.desafio_android.util.paging.Listing
-import com.dobler.desafio_android.util.rx.SchedulerContract
+import com.dobler.desafio_android.data.repository.githubRepository.GithubRepository
+import com.dobler.desafio_android.vo.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-class ListRepositoryViewModel(
-    val repository: com.dobler.desafio_android.data.repository.githubRepository.GithubRepository,
-    private val schedulers: SchedulerContract
-) : ViewModel() {
+class ListRepositoryViewModel(val repository: GithubRepository) : ViewModel() {
 
     private var started: Boolean = false
-    private var repoResult = MutableLiveData<Listing<com.dobler.desafio_android.vo.GithubRepository>>()
 
-    val githubRepositories = Transformations.switchMap(repoResult, { it.pagedList })!!
-    val networkState = Transformations.switchMap(repoResult, { it.networkState })!!
-    val refreshState = Transformations.switchMap(repoResult, { it.refreshState })!!
+    private val repoResult = MutableLiveData<ResponseState<List<Repo>>>()
+    val githubRepositories = Transformations.map(repoResult) { it }
 
     fun refresh() {
-        repoResult.value?.refresh?.invoke()
+        repoResult.postValue(Success(emptyList()))
+        loadList()
     }
-
-    fun retry() {
-        val listing = repoResult?.value
-        listing?.retry?.invoke()
-    }
-
 
     fun loadList() {
 
-        if (!started) {
-            repository.getPage()
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe({
-                    repoResult.postValue(it)
-                    started = true
+        repoResult.postValue(Loading())
 
-                }, {
-                })
+        runBlocking {
+            launch {
+                try {
+
+                    val response = repository.getPage()
+                    response.let {
+                        repoResult.postValue(Success(it.items))
+                        started = true
+                    }
+                } catch (e: Exception) {
+                    started = true
+                    repoResult.postValue(Error(e.message.toString()))
+
+                }
+
+            }
+
 
         }
     }

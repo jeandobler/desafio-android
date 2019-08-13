@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dobler.desafio_android.R
-import com.dobler.desafio_android.vo.GithubRepository
 import com.dobler.desafio_android.ui.githubRepository.adapter.RepositoryListAdapter
-import com.dobler.desafio_android.util.paging.NetworkState
+import com.dobler.desafio_android.vo.Error
+import com.dobler.desafio_android.vo.Loading
+import com.dobler.desafio_android.vo.Success
 import kotlinx.android.synthetic.main.fragment_repository_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -36,21 +36,21 @@ class ListRepositoryFragment : Fragment() {
 
 
     private fun initSwipeToRefresh() {
-        viewModel.refreshState.observe(this, Observer {
-            swipe_refresh.isRefreshing = it == NetworkState.LOADING
-        })
+//        viewModel.refreshState.observe(this, Observer {
+//            swipe_refresh.isRefreshing = it == NetworkState.LOADING
+//        })
         swipe_refresh.setOnRefreshListener {
             viewModel.refresh()
         }
     }
 
-    fun setUpRecycleView() {
+    private fun setUpRecycleView() {
 
         val adapter = RepositoryListAdapter {
             val action = ListRepositoryFragmentDirections.
                 actionRepositoryListFragmentToPullRequestFragment( it.owner.login, it.name)
             findNavController().navigate(action)
-        };
+        }
 
         rvMainRepositoryList.apply {
             this.adapter = adapter
@@ -58,17 +58,31 @@ class ListRepositoryFragment : Fragment() {
         }
 
         viewModel.githubRepositories.observe(this,
-            Observer<PagedList<GithubRepository>> {
-                adapter.submitList(it)
+            Observer {
+                when (it) {
+                    is Success -> {
 
-                if(it.size == 0){
-                    tvNoRepositories.visibility = View.VISIBLE
+                        if (it.response.isEmpty()) {
+                            tvNoRepositories.visibility = View.VISIBLE
+                        } else {
+                            adapter.submitList(it.response)
+                        }
+                        setRefreshListState(false)
+                    }
+                    is Error -> {
+                        setRefreshListState(false)
+                    }
+                    is Loading -> {
+                        setRefreshListState(true)
+                    }
                 }
             })
+    }
 
-        viewModel.networkState.observe(this, Observer {
-            adapter.setNetworkState(it)
-        })
+    fun setRefreshListState(load: Boolean) {
+        if (swipe_refresh.isRefreshing != load) {
+            swipe_refresh.isRefreshing = load
+        }
     }
 
 

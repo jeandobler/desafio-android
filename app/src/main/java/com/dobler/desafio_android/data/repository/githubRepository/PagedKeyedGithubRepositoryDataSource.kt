@@ -2,20 +2,17 @@ package com.dobler.desafio_android.data.repository.githubRepository
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
-import com.dobler.desafio_android.data.api.GithubRepositoryResponse
-import com.dobler.desafio_android.data.api.GithubRepositoryService
+import com.dobler.desafio_android.data.api.GithubService
 import com.dobler.desafio_android.util.paging.NetworkState
-import com.dobler.desafio_android.vo.GithubRepository
+import com.dobler.desafio_android.vo.Repo
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import retrofit2.Call
-import retrofit2.Response
 import java.io.IOException
 import java.util.concurrent.Executors
 
 class PageKeyedSubredditDataSource(
-    private val api: GithubRepositoryService
-) : PageKeyedDataSource<String, GithubRepository>() {
+    private val api: GithubService
+) : PageKeyedDataSource<String, Repo>() {
 
     private val retryExecutor = Executors.newFixedThreadPool(5)
 
@@ -39,74 +36,63 @@ class PageKeyedSubredditDataSource(
 
     override fun loadBefore(
         params: LoadParams<String>,
-        callback: LoadCallback<String, GithubRepository>
+        callback: LoadCallback<String, Repo>
     ) {
     }
 
-    override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<String, GithubRepository>) {
-        networkState.postValue(NetworkState.LOADING)
+    override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<String, Repo>) {
+
+
 
         runBlocking {
             launch {
+                try {
+                    networkState.postValue(NetworkState.LOADING)
+                    val response = api.getRepositoriesPage("language:Java", "stars", ++page)
 
-                api.getPage("language:Java", "stars", ++page).enqueue(
-                    object : retrofit2.Callback<GithubRepositoryResponse> {
-                        override fun onFailure(call: Call<GithubRepositoryResponse>, t: Throwable) {
-                            retry = {
-                                loadAfter(params, callback)
-                            }
-                            networkState.postValue(NetworkState.error(t.message ?: "unknown err"))
-                        }
+                    val data = response.items
+                    val items = data.map { it }
+                    callback.onResult(items, page.toString())
+                    networkState.postValue(NetworkState.LOADED)
 
-                        override fun onResponse(
-                            call: Call<GithubRepositoryResponse>,
-                            response: Response<GithubRepositoryResponse>
-                        ) {
-                            if (response.isSuccessful) {
-                                val data = response.body()?.items
-                                val items = data?.map { it } ?: emptyList()
-                                retry = null
-                                callback.onResult(items, page.toString())
-                                networkState.postValue(NetworkState.LOADED)
-                            } else {
-                                retry = {
-                                    loadAfter(params, callback)
-                                }
-                                networkState.postValue(
-                                    NetworkState.error("error code: ${response.code()}")
-                                )
-                            }
-                        }
-                    }
-                )
+                } catch (e: Exception) {
+                    networkState.postValue(NetworkState.error(e.message ?: "unknown err"))
+                }
+
             }
         }
     }
 
     override fun loadInitial(
         params: LoadInitialParams<String>,
-        callback: LoadInitialCallback<String, GithubRepository>
+        callback: LoadInitialCallback<String, Repo>
     ) {
-        val currentPage = page
-        val request = api.getPage("language:Java", "stars", currentPage)
-        networkState.postValue(NetworkState.LOADING)
-        initialLoad.postValue(NetworkState.LOADING)
 
-        try {
-            val response = request.execute()
-            val data = response.body()?.items
-            val items = data?.map { it } ?: emptyList()
-            retry = null
-            networkState.postValue(NetworkState.LOADED)
-            initialLoad.postValue(NetworkState.LOADED)
-            callback.onResult(items, page--.toString(), page++.toString())
-        } catch (ioException: IOException) {
-            retry = {
-                loadInitial(params, callback)
+        runBlocking {
+            launch {
+
+                try {
+                    val currentPage = page
+                    val response = api.getRepositoriesPage("language:Java", "stars", currentPage)
+                    networkState.postValue(NetworkState.LOADING)
+                    initialLoad.postValue(NetworkState.LOADING)
+
+                    val data = response.items
+                    val items = data.map { it }
+                    retry = null
+                    networkState.postValue(NetworkState.LOADED)
+                    initialLoad.postValue(NetworkState.LOADED)
+                    callback.onResult(items, page--.toString(), page++.toString())
+                } catch (ioException: IOException) {
+                    retry = {
+                        loadInitial(params, callback)
+                    }
+                    val error = NetworkState.error(ioException.message ?: "unknown error")
+                    networkState.postValue(error)
+                    initialLoad.postValue(error)
+                }
+
             }
-            val error = NetworkState.error(ioException.message ?: "unknown error")
-            networkState.postValue(error)
-            initialLoad.postValue(error)
         }
     }
 }

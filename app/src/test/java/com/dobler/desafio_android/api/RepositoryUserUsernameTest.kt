@@ -2,7 +2,7 @@ package com.dobler.desafio_android.api
 
 import com.dobler.desafio_android.api.UserValidator.UsernameValidator
 import com.dobler.desafio_android.data.api.GithubRepositoryResponse
-import com.dobler.desafio_android.data.api.GithubRepositoryService
+import com.dobler.desafio_android.data.api.GithubService
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Assert.*
 import org.junit.Test
@@ -16,8 +16,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RepositoryUserUsernameTest : BaseServiceTest() {
 
 
-    lateinit var service: GithubRepositoryService
-    var serviceSource = GithubRepositoryService::class.java
+    lateinit var service: GithubService
+    var serviceSource = GithubService::class.java
 
 
     fun createService() {
@@ -36,7 +36,7 @@ class RepositoryUserUsernameTest : BaseServiceTest() {
     @Test
     fun whenUserNameIsCorrect_shouldReturnTrue() {
         createService()
-        val results: GithubRepositoryResponse? = service.getPage("language:Java", "stars", 1)
+        val results: GithubRepositoryResponse? = service.getRepositoriesPage("language:Java", "stars", 1)
             .execute().body()
         mockWebServer.takeRequest()
 

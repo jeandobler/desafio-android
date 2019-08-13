@@ -2,19 +2,18 @@ package com.dobler.desafio_android.ui.pull
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dobler.desafio_android.vo.RepositoryPullRequest
 import com.dobler.desafio_android.data.repository.pullRequest.PullRequestRepository
 import com.dobler.desafio_android.util.rx.SchedulerContract
-import io.reactivex.disposables.CompositeDisposable
+import com.dobler.desafio_android.vo.PullRequest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class PullRequestViewModel(
     private val repository: PullRequestRepository,
     private val schedulers: SchedulerContract
 ) : ViewModel() {
 
-    val disposables = CompositeDisposable()
-    var lastPageLoaded = 0
-    val pullRequest = MutableLiveData<List<RepositoryPullRequest>>()
+    val pullRequest = MutableLiveData<List<PullRequest>>()
 
     var looaded: Boolean = false
     lateinit var user: String
@@ -24,19 +23,18 @@ class PullRequestViewModel(
 
         if (!looaded) {
 
-            val disposable = repository.getAll(user, repositoryName)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe({
-                    pullRequest.postValue(it)
+            runBlocking {
+                launch {
+                    try {
+                        repository.getAll(user, repositoryName).let {
+                            pullRequest.postValue(it)
+                        }
 
-                    looaded = true
-
-                }, {
-                })
-
-            disposables.add(disposable)
-
+                    } catch (e: Exception) {
+                        looaded = false
+                    }
+                }
+            }
         }
     }
 }
