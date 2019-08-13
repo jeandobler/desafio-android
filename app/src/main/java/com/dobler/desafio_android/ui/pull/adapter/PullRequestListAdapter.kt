@@ -3,17 +3,16 @@ package com.dobler.desafio_android.ui.pull.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
-import com.dobler.desafio_android.vo.RepositoryPullRequest
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.dobler.desafio_android.databinding.ListRvPullRequestBinding
+import com.dobler.desafio_android.vo.PullRequest
 import kotlinx.android.synthetic.main.list_rv_user.view.*
 
 class PullRequestListAdapter() :
     RecyclerView.Adapter<PullRequestListAdapter.PullRequestViewHolder>() {
 
-    var dataset: ArrayList<RepositoryPullRequest> = ArrayList();
+    var dataset: ArrayList<PullRequest> = ArrayList();
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PullRequestListAdapter.PullRequestViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,7 +26,7 @@ class PullRequestListAdapter() :
         return PullRequestViewHolder(binding)
     }
 
-    fun addPullRequestsList(data: List<RepositoryPullRequest>) {
+    fun addPullRequestsList(data: List<PullRequest>) {
         dataset.addAll(data)
         notifyDataSetChanged()
     }
@@ -37,18 +36,19 @@ class PullRequestListAdapter() :
 
         holder.bind(dataset[position])
 
-        Glide.with(holder.itemView.context)
-            .load(dataset[position].user.avatar_url)
-            .apply(RequestOptions.circleCropTransform())
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(holder.itemView.ivUserImage)
+
+        holder.itemView.ivUserImage.load(dataset[position].user.avatar_url) {
+            crossfade(true)
+            transformations(CircleCropTransformation())
+        }
+
     }
 
     override fun getItemCount() = dataset.size
 
     class PullRequestViewHolder(val view: ListRvPullRequestBinding) : RecyclerView.ViewHolder(view.root) {
 
-        fun bind(pullRequest: RepositoryPullRequest) {
+        fun bind(pullRequest: PullRequest) {
             view.pulls = pullRequest
             view.executePendingBindings()
         }

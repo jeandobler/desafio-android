@@ -1,6 +1,6 @@
 package com.dobler.desafio_android.vo
 
-data class RepositoryPullRequest(
+data class PullRequest(
     val id: Int,
     val body: String,
     val title: String,

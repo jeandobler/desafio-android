@@ -1,7 +1,7 @@
 package com.dobler.desafio_android.vo
 
 
-data class GithubRepository(
+data class Repo(
     val id: Int,
     val name: String,
     val owner: User,

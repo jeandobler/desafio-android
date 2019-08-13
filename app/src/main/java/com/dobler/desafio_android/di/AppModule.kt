@@ -2,7 +2,7 @@ package com.dobler.desafio_android.di
 
 import android.util.Log
 import com.dobler.desafio_android.BuildConfig
-import com.dobler.desafio_android.data.api.GithubRepositoryService
+import com.dobler.desafio_android.data.api.GithubService
 import com.dobler.desafio_android.data.repository.githubRepository.GithubRepositoryDataSource
 import com.dobler.desafio_android.data.repository.githubRepository.GithubRepository
 import com.dobler.desafio_android.data.repository.pullRequest.PullRequestRepository
@@ -30,7 +30,7 @@ object AppModule {
         }
 
         single {
-            get<Retrofit>().create(GithubRepositoryService::class.java) as GithubRepositoryService
+            get<Retrofit>().create(GithubService::class.java) as GithubService
         }
 
     }

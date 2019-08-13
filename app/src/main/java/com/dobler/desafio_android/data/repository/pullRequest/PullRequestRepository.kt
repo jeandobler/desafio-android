@@ -1,15 +1,11 @@
 package com.dobler.desafio_android.data.repository.pullRequest
 
-import androidx.annotation.MainThread
-import com.dobler.desafio_android.data.api.GithubRepositoryService
-import com.dobler.desafio_android.vo.RepositoryPullRequest
-import io.reactivex.Observable
+import com.dobler.desafio_android.data.api.GithubService
+import com.dobler.desafio_android.vo.PullRequest
 
-class PullRequestRepository(private val api: GithubRepositoryService) :
-    PullRequestRepositoryContract {
+class PullRequestRepository(private val api: GithubService) {
 
-    @MainThread
-    override fun getAll(user: String, repositoryName: String): Observable<List<RepositoryPullRequest>> {
-        return api.getList(user, repositoryName)
-    }
+    suspend fun getAll(user: String, repositoryName: String): List<PullRequest> =
+        api.getList(user, repositoryName)
+
 }

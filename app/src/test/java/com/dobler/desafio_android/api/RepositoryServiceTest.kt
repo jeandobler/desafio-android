@@ -1,8 +1,8 @@
 package com.dobler.desafio_android.api
 
 import com.dobler.desafio_android.data.api.GithubRepositoryResponse
-import com.dobler.desafio_android.data.api.GithubRepositoryService
-import com.dobler.desafio_android.vo.GithubRepository
+import com.dobler.desafio_android.data.api.GithubService
+import com.dobler.desafio_android.vo.Repo
 import com.dobler.desafio_android.vo.User
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers
@@ -21,8 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RepositoryServiceTest : BaseServiceTest() {
 
 
-    protected lateinit var service: GithubRepositoryService
-    val serviceSource = GithubRepositoryService::class.java
+    protected lateinit var service: GithubService
+    val serviceSource = GithubService::class.java
 
     @Before
     fun createService() {
@@ -47,7 +47,7 @@ class RepositoryServiceTest : BaseServiceTest() {
         val results: GithubRepositoryResponse? = service.getPage("language:Java", "stars", 1).execute().body()
         mockWebServer.takeRequest()
 
-        assertThat<List<GithubRepository>>(results?.items, IsNull.notNullValue())
+        assertThat<List<Repo>>(results?.items, IsNull.notNullValue())
         assertThat(results!!.items[0].name, CoreMatchers.`is`("java-design-patterns"))
         assertThat<User>(results!!.items[0].owner, IsNull.notNullValue())
     }
@@ -59,7 +59,7 @@ class RepositoryServiceTest : BaseServiceTest() {
         val results: GithubRepositoryResponse? = service.getPage("language:Java", "stars", 2).execute().body()
         mockWebServer.takeRequest()
 
-        assertThat<List<GithubRepository>>(results?.items, IsNull.notNullValue())
+        assertThat<List<Repo>>(results?.items, IsNull.notNullValue())
         assertThat(results!!.items[0].name, CoreMatchers.`is`("druid"))
         assertThat<User>(results!!.items[0].owner, IsNull.notNullValue())
     }

@@ -1,12 +1,12 @@
 package com.dobler.desafio_android.data.api
 
-import com.dobler.desafio_android.vo.RepositoryPullRequest
+import com.dobler.desafio_android.vo.PullRequest
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 
-interface GithubRepositoryService {
+interface GithubService {
 
     @GET("search/repositories")
     suspend fun getPage(
@@ -16,11 +16,11 @@ interface GithubRepositoryService {
     ): GithubRepositoryResponse
 
     @GET("repos/{user}/{repositoryName}/pulls")
-    fun getList(
+    suspend fun getList(
         @Path("user") user: String,
         @Path("repositoryName") repositoryName: String
     ):
-            List<RepositoryPullRequest>
+            List<PullRequest>
 
 
 }
