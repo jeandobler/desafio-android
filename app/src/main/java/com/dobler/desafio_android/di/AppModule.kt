@@ -3,13 +3,10 @@ package com.dobler.desafio_android.di
 import android.util.Log
 import com.dobler.desafio_android.BuildConfig
 import com.dobler.desafio_android.data.api.GithubService
-import com.dobler.desafio_android.data.repository.githubRepository.GithubRepositoryDataSource
 import com.dobler.desafio_android.data.repository.githubRepository.GithubRepository
 import com.dobler.desafio_android.data.repository.pullRequest.PullRequestRepository
-import com.dobler.desafio_android.ui.pull.PullRequestViewModel
 import com.dobler.desafio_android.ui.githubRepository.ListRepositoryViewModel
-import com.dobler.desafio_android.util.rx.SchedulerContract
-import com.dobler.desafio_android.util.rx.SchedulerProvider
+import com.dobler.desafio_android.ui.pull.PullRequestViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -19,12 +16,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
 object AppModule {
 
-
     val apiModule = module {
-
         single {
             initRetrofit()
         }
@@ -32,33 +26,20 @@ object AppModule {
         single {
             get<Retrofit>().create(GithubService::class.java) as GithubService
         }
-
     }
 
     val repositoriesModule = module {
-
-        single { GithubRepositoryDataSource(get()) }
-        single { GithubRepository(get()) }
         single { PullRequestRepository(get()) }
-    }
-
-    val rxModule = module {
-
-        single {
-            SchedulerProvider() as SchedulerContract
-        }
-
+        single { GithubRepository(get()) }
     }
 
     val vieModelModule = module {
 
         viewModel { ListRepositoryViewModel(get()) }
-        viewModel { PullRequestViewModel(get(), get()) }
-
+        viewModel { PullRequestViewModel(get()) }
     }
 
     private fun initRetrofit(): Retrofit {
-
         val httpBuilder = OkHttpClient.Builder()
 
         httpBuilder.readTimeout(15, TimeUnit.SECONDS)
@@ -80,10 +61,6 @@ object AppModule {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
 
-
         return retrofit.build()
-
     }
-
-
 }

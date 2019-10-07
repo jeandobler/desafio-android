@@ -2,17 +2,14 @@ package com.dobler.desafio_android.ui.githubRepository.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
-import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
-
-import com.dobler.desafio_android.vo.Repo
 import com.dobler.desafio_android.databinding.ListRvRepositoryBinding
 import com.dobler.desafio_android.util.paging.NetworkState
+import com.dobler.desafio_android.vo.Repo
 import kotlinx.android.synthetic.main.list_rv_user.view.*
 
 class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
@@ -43,7 +40,7 @@ class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
 
             val repository = it
 
-            holder.itemView.ivUserImage.load(it.owner.avatar_url){
+            holder.itemView.ivUserImage.load(it.owner.avatar_url) {
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
@@ -59,7 +56,8 @@ class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
         }
     }
 
-    class GithubRepositoryViewHolder(val view: ListRvRepositoryBinding) : RecyclerView.ViewHolder(view.root)
+    class GithubRepositoryViewHolder(val view: ListRvRepositoryBinding) :
+        RecyclerView.ViewHolder(view.root)
 
     private fun hasExtraRow() = networkState != null && networkState != NetworkState.LOADED
 
@@ -88,8 +86,6 @@ class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
             override fun areContentsTheSame(oldItem: Repo, newItem: Repo): Boolean {
                 return oldItem == newItem
             }
-
         }
     }
-
 }

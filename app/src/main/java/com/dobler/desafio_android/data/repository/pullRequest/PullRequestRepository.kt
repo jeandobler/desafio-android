@@ -7,5 +7,4 @@ class PullRequestRepository(private val api: GithubService) {
 
     suspend fun getAll(user: String, repositoryName: String): List<PullRequest> =
         api.getPullsList(user, repositoryName)
-
 }

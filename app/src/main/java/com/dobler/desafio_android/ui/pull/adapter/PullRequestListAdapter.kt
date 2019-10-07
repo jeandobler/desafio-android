@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.list_rv_user.view.*
 class PullRequestListAdapter() :
     RecyclerView.Adapter<PullRequestListAdapter.PullRequestViewHolder>() {
 
-    var dataset: ArrayList<PullRequest> = ArrayList();
+    var dataset: ArrayList<PullRequest> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PullRequestListAdapter.PullRequestViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -31,17 +31,14 @@ class PullRequestListAdapter() :
         notifyDataSetChanged()
     }
 
-
     override fun onBindViewHolder(holder: PullRequestViewHolder, position: Int) {
 
         holder.bind(dataset[position])
-
 
         holder.itemView.ivUserImage.load(dataset[position].user.avatar_url) {
             crossfade(true)
             transformations(CircleCropTransformation())
         }
-
     }
 
     override fun getItemCount() = dataset.size
@@ -53,5 +50,4 @@ class PullRequestListAdapter() :
             view.executePendingBindings()
         }
     }
-
 }

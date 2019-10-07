@@ -5,10 +5,7 @@ import com.dobler.desafio_android.data.api.GithubService
 
 class GithubRepository(private val api: GithubService) {
 
-
     suspend fun getPage(): GithubRepositoryResponse = api.getRepositoriesPage("language:Java", "stars", 1)
-
-
 
 //                    return api.getPullsList()
 

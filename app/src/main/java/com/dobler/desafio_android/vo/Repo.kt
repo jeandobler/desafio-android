@@ -1,6 +1,5 @@
 package com.dobler.desafio_android.vo
 
-
 data class Repo(
     val id: Int,
     val name: String,

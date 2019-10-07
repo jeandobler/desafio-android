@@ -5,7 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-
 interface GithubService {
 
     @GET("search/repositories")
@@ -20,6 +19,4 @@ interface GithubService {
         @Path("user") user: String,
         @Path("repositoryName") repositoryName: String
     ): List<PullRequest>
-
-
 }

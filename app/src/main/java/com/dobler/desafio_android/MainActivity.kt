@@ -15,7 +15,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         navController = Navigation.findNavController(this, R.id.navHostFragment)
         setupActionBarWithNavController(navController!!)
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -27,5 +26,4 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
 }

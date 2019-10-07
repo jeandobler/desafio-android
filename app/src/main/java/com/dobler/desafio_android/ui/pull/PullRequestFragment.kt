@@ -12,7 +12,6 @@ import com.dobler.desafio_android.ui.pull.adapter.PullRequestListAdapter
 import kotlinx.android.synthetic.main.fragment_pull_request_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 class PullRequestFragment : Fragment() {
 
     private val viewModel: PullRequestViewModel by viewModel()
@@ -28,7 +27,8 @@ class PullRequestFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_pull_request_list, container, false)
@@ -39,7 +39,6 @@ class PullRequestFragment : Fragment() {
         setUpRecycleView()
         viewModel.loadList()
     }
-
 
     fun setUpRecycleView() {
 
@@ -57,18 +56,16 @@ class PullRequestFragment : Fragment() {
 
         viewModel.pullRequest.observe(this, androidx.lifecycle.Observer {
             adapter.addPullRequestsList(it)
-            rvPullRequestList.adapter?.notifyDataSetChanged();
+            rvPullRequestList.adapter?.notifyDataSetChanged()
             rvPullRequestList.scheduleLayoutAnimation()
 
             if (it != null) {
                 pbPullRequest.visibility = View.GONE
             }
 
-            if(it.size ==0){
+            if (it.isEmpty()) {
                 tvNoPullRequest.visibility = View.VISIBLE
             }
         })
     }
-
 }
-

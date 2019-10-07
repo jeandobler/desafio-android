@@ -1,6 +1,7 @@
 package com.dobler.desafio_android.ui.githubRepository
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dobler.desafio_android.R
+import com.dobler.desafio_android.databinding.FragmentRepositoryListBinding
 import com.dobler.desafio_android.ui.githubRepository.adapter.RepositoryListAdapter
-import com.dobler.desafio_android.vo.Error
-import com.dobler.desafio_android.vo.Loading
-import com.dobler.desafio_android.vo.Success
 import kotlinx.android.synthetic.main.fragment_repository_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,26 +18,25 @@ class ListRepositoryFragment : Fragment() {
 
     private val viewModel: ListRepositoryViewModel by viewModel()
 
+    private lateinit var binding: FragmentRepositoryListBinding
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_repository_list, container, false)
+        binding = FragmentRepositoryListBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecycleView()
         initSwipeToRefresh()
-        viewModel.loadList()
     }
 
-
     private fun initSwipeToRefresh() {
-//        viewModel.refreshState.observe(this, Observer {
-//            swipe_refresh.isRefreshing = it == NetworkState.LOADING
-//        })
-        swipe_refresh.setOnRefreshListener {
+        binding.swipeRefresh.setOnRefreshListener {
             viewModel.refresh()
         }
     }
@@ -47,8 +44,11 @@ class ListRepositoryFragment : Fragment() {
     private fun setUpRecycleView() {
 
         val adapter = RepositoryListAdapter {
-            val action = ListRepositoryFragmentDirections.
-                actionRepositoryListFragmentToPullRequestFragment( it.owner.login, it.name)
+            val action =
+                ListRepositoryFragmentDirections.actionRepositoryListFragmentToPullRequestFragment(
+                    it.owner.login,
+                    it.name
+                )
             findNavController().navigate(action)
         }
 
@@ -59,31 +59,41 @@ class ListRepositoryFragment : Fragment() {
 
         viewModel.githubRepositories.observe(this,
             Observer {
+                Log.e("Bro", it.javaClass.toString())
                 when (it) {
-                    is Success -> {
-
-                        if (it.response.isEmpty()) {
-                            tvNoRepositories.visibility = View.VISIBLE
-                        } else {
-                            adapter.submitList(it.response)
-                        }
-                        setRefreshListState(false)
+                    is Results -> {
+                        binding.tvNoRepositories.visibility = View.GONE
+                        adapter.submitList(it.response)
+                        hideLoading()
+                    }
+                    is EmptyResults -> {
+                        binding.tvNoRepositories.visibility = View.VISIBLE
+                        hideLoading()
                     }
                     is Error -> {
-                        setRefreshListState(false)
+                        binding.tvNoRepositories.visibility = View.VISIBLE
+                        hideLoading()
+                        Log.e("Bro", it.error)
                     }
-                    is Loading -> {
-                        setRefreshListState(true)
+                    is ShowLoading -> {
+                        showLoading()
                     }
                 }
             })
     }
 
     fun setRefreshListState(load: Boolean) {
-        if (swipe_refresh.isRefreshing != load) {
-            swipe_refresh.isRefreshing = load
+        if (binding.swipeRefresh.isRefreshing != load) {
+            binding.swipeRefresh.isRefreshing = load
+
         }
     }
 
+    fun showLoading() {
+        setRefreshListState(true)
+    }
 
+    fun hideLoading() {
+        setRefreshListState(false)
+    }
 }
