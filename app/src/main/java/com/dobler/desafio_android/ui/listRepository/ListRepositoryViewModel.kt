@@ -1,9 +1,9 @@
-package com.dobler.desafio_android.ui.githubRepository
+package com.dobler.desafio_android.ui.listRepository
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dobler.desafio_android.data.repository.githubRepository.GithubRepository
+import com.dobler.desafio_android.repository.githubRepository.GithubRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -40,4 +40,5 @@ class ListRepositoryViewModel(val repository: GithubRepository) : ViewModel() {
             }
         }
     }
+
 }

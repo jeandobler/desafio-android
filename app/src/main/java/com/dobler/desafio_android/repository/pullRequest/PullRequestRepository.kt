@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.data.repository.pullRequest
+package com.dobler.desafio_android.repository.pullRequest
 
 import com.dobler.desafio_android.data.api.GithubService
 import com.dobler.desafio_android.vo.PullRequest

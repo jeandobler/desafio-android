@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.ui.githubRepository
+package com.dobler.desafio_android.ui.listRepository
 
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dobler.desafio_android.databinding.FragmentRepositoryListBinding
-import com.dobler.desafio_android.ui.githubRepository.adapter.RepositoryListAdapter
 import kotlinx.android.synthetic.main.fragment_repository_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -43,14 +42,15 @@ class ListRepositoryFragment : Fragment() {
 
     private fun setUpRecycleView() {
 
-        val adapter = RepositoryListAdapter {
-            val action =
-                ListRepositoryFragmentDirections.actionRepositoryListFragmentToPullRequestFragment(
-                    it.owner.login,
-                    it.name
-                )
-            findNavController().navigate(action)
-        }
+        val adapter =
+            RepositoryListAdapter {
+                val action =
+                    ListRepositoryFragmentDirections.actionRepositoryListFragmentToPullRequestFragment(
+                        it.owner.login,
+                        it.name
+                    )
+                findNavController().navigate(action)
+            }
 
         rvMainRepositoryList.apply {
             this.adapter = adapter
@@ -59,7 +59,6 @@ class ListRepositoryFragment : Fragment() {
 
         viewModel.githubRepositories.observe(this,
             Observer {
-                Log.e("Bro", it.javaClass.toString())
                 when (it) {
                     is Results -> {
                         binding.tvNoRepositories.visibility = View.GONE

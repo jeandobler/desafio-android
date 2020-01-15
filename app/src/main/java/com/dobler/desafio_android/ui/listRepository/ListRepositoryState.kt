@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.ui.githubRepository
+package com.dobler.desafio_android.ui.listRepository
 
 import com.dobler.desafio_android.vo.Repo
 

@@ -20,6 +20,7 @@ class Application : Application() {
                 listOf(
                     AppModule.vieModelModule,
                     AppModule.apiModule,
+                    AppModule.databaseModule,
                     AppModule.repositoriesModule
                 )
             )

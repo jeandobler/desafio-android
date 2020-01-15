@@ -1,4 +1,4 @@
-package com.dobler.desafio_android.ui.githubRepository.adapter
+package com.dobler.desafio_android.ui.listRepository
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,7 +13,9 @@ import com.dobler.desafio_android.vo.Repo
 import kotlinx.android.synthetic.main.list_rv_user.view.*
 
 class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
-    ListAdapter<Repo, RepositoryListAdapter.GithubRepositoryViewHolder>(diffCallback) {
+    ListAdapter<Repo, RepositoryListAdapter.GithubRepositoryViewHolder>(
+        diffCallback
+    ) {
 
     private var networkState: NetworkState? = null
 
@@ -29,7 +31,9 @@ class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
             false
         )
 
-        return GithubRepositoryViewHolder(binding)
+        return GithubRepositoryViewHolder(
+            binding
+        )
     }
 
     override fun onBindViewHolder(holder: GithubRepositoryViewHolder, position: Int) {
@@ -44,11 +48,6 @@ class RepositoryListAdapter(private val onClick: (Repo) -> Unit) :
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
-//            Glide.with(holder.itemView.context)
-//                .load(it.owner.avatar_url)
-//                .apply(RequestOptions.circleCropTransform())
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(holder.itemView.ivUserImage)
 
             holder.itemView.setOnClickListener {
                 onClick(repository)

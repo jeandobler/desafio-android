@@ -1,7 +1,11 @@
 package com.dobler.desafio_android.vo
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Repo(
-    val id: Int,
+    @PrimaryKey val id: Int,
     val name: String,
     val owner: User,
     val full_name: String,

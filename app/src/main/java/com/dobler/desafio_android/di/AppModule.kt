@@ -1,11 +1,14 @@
 package com.dobler.desafio_android.di
 
+import android.content.Context
 import android.util.Log
+import androidx.room.Room
 import com.dobler.desafio_android.BuildConfig
 import com.dobler.desafio_android.data.api.GithubService
-import com.dobler.desafio_android.data.repository.githubRepository.GithubRepository
-import com.dobler.desafio_android.data.repository.pullRequest.PullRequestRepository
-import com.dobler.desafio_android.ui.githubRepository.ListRepositoryViewModel
+import com.dobler.desafio_android.data.dao.AppDatabase
+import com.dobler.desafio_android.repository.githubRepository.GithubRepository
+import com.dobler.desafio_android.repository.pullRequest.PullRequestRepository
+import com.dobler.desafio_android.ui.listRepository.ListRepositoryViewModel
 import com.dobler.desafio_android.ui.pull.PullRequestViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,17 +23,31 @@ object AppModule {
 
     val apiModule = module {
         single {
-            initRetrofit()
+            initHttpBuilder()
+        }
+
+        single {
+            initRetrofit(get())
         }
 
         single {
             get<Retrofit>().create(GithubService::class.java) as GithubService
         }
+
+
+    }
+
+    val databaseModule = module {
+
+        single {
+            loadAppDatabase(get())
+        }
+
     }
 
     val repositoriesModule = module {
         single { PullRequestRepository(get()) }
-        single { GithubRepository(get()) }
+        single { GithubRepository(get(), get()) }
     }
 
     val vieModelModule = module {
@@ -39,7 +56,7 @@ object AppModule {
         viewModel { PullRequestViewModel(get()) }
     }
 
-    private fun initRetrofit(): Retrofit {
+    fun initHttpBuilder(): OkHttpClient.Builder {
         val httpBuilder = OkHttpClient.Builder()
 
         httpBuilder.readTimeout(15, TimeUnit.SECONDS)
@@ -53,14 +70,26 @@ object AppModule {
 
             httpBuilder.addInterceptor(logging)
         }
+        return httpBuilder
+    }
 
+    private fun initRetrofit(httpBuilder: OkHttpClient.Builder, url: String? = null): Retrofit {
+
+        val rightUrl = if (url.isNullOrEmpty()) BuildConfig.API_URL else url
         val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.API_URL)
+            .baseUrl(rightUrl)
             .client(httpBuilder.build())
 
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
 
         return retrofit.build()
+    }
+
+    private fun loadAppDatabase(context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java, "github"
+        ).build()
     }
 }

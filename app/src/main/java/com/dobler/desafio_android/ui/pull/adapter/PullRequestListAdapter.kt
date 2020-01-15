@@ -9,12 +9,12 @@ import com.dobler.desafio_android.databinding.ListRvPullRequestBinding
 import com.dobler.desafio_android.vo.PullRequest
 import kotlinx.android.synthetic.main.list_rv_user.view.*
 
-class PullRequestListAdapter() :
+class PullRequestListAdapter :
     RecyclerView.Adapter<PullRequestListAdapter.PullRequestViewHolder>() {
 
     var dataset: ArrayList<PullRequest> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PullRequestListAdapter.PullRequestViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PullRequestViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
         val binding: ListRvPullRequestBinding = ListRvPullRequestBinding.inflate(
